@@ -1,18 +1,6 @@
 # PYTHON_ARGCOMPLETE_OK
 
-from argapp.cli import Arg, App, Bundle, Main
-from .core import *
-
-
-class UniwsInit(App):
-    def __init__(self) -> 'None':
-        super().__init__(
-            name='init',
-            help='Initialize a workspace.',
-        )
-
-    def __call__(self, bundle: 'Bundle') -> 'None':
-        super().__call__(bundle)
+from .init import *
 
 
 class UniwsHardware(App):
