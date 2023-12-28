@@ -1,5 +1,53 @@
 # PYTHON_ARGCOMPLETE_OK
 
+from argapp.cli import Arg, App, Bundle, Main
+from .core import *
+
+
+class UniwsInit(App):
+    def __init__(self) -> 'None':
+        super().__init__(
+            name='init',
+            help='Initialize a workspace.',
+        )
+
+    def __call__(self, bundle: 'Bundle') -> 'None':
+        super().__call__(bundle)
+
+
+class UniwsHardware(App):
+    def __init__(self) -> 'None':
+        super().__init__(
+            name='hw',
+            help='Hardware manipulation.',
+        )
+
+    def __call__(self, bundle: 'Bundle') -> 'None':
+        super().__call__(bundle)
+
+
+class UniwsSoftware(App):
+    def __init__(self) -> 'None':
+        super().__init__(
+            name='sw',
+            help='Software manipulation.',
+        )
+
+    def __call__(self, bundle: 'Bundle') -> 'None':
+        super().__call__(bundle)
+
+
+class UniwsMain(Main):
+    def __init__(self) -> 'None':
+        super().__init__(
+            name='uniws',
+            help='The primary application.',
+        )
+        self.add(UniwsInit())
+        self.add(UniwsHardware())
+        self.add(UniwsSoftware())
+
+
 #
 # Entry points.
 #
@@ -9,6 +57,7 @@ def uniws():
     '''
     The primary application.
     '''
+    UniwsMain()()
 
 
 def uha():
