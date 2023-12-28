@@ -65,3 +65,21 @@ def sh(
         LD_LIBRARY_PATH = f'export LD_LIBRARY_PATH="{DIR_LIB}:${{LD_LIBRARY_PATH}}"'
         cmd = f'{PATH};{PYTHONPATH};{LD_LIBRARY_PATH};{cmd}'
     _sh(cmd, check, mode)
+
+
+class UniwsShortcutApp(App):
+    def __init__(
+        self,
+        shortcut: 'bool',
+        sname: 'str' = None,
+        lname: 'str' = None,
+        help: 'str' = None,
+        prolog: 'str' = None,
+        epilog: 'str' = None,
+    ) -> 'None':
+        super().__init__(
+            name=sname if shortcut else lname,
+            help=help,
+            prolog=prolog,
+            epilog=epilog,
+        )
