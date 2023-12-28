@@ -30,6 +30,7 @@ class UniwsSoftwareApp(UniwsShortcutApp):
         help: 'str' = None,
         prolog: 'str' = None,
         epilog: 'str' = None,
+        needs_hw: 'bool' = None,
     ) -> 'None':
         super().__init__(
             shortcut=shortcut,
@@ -39,9 +40,35 @@ class UniwsSoftwareApp(UniwsShortcutApp):
             prolog=prolog,
             epilog=epilog,
         )
+        choices = {}
+        self.needs_hw = needs_hw
+        self.software = {x.name: x for x in software()}
+        for x in self.software.values():
+            if getattr(type(x), lname) != getattr(Software, lname):
+                choices[x.name] = x.help
+        if choices:
+            self.arg_sw = Arg(
+                name='SW',
+                help=f'Software to {lname}.',
+                choices=choices,
+            )
+        else:
+            self.arg_sw = Arg(
+                name='SW',
+                help=f'Software to {lname} (none available).',
+            )
+        self.lname = lname
+        self.add(self.arg_sw)
 
     def __call__(self, bundle: 'Bundle') -> 'None':
         super().__call__(bundle)
+        if not self.arg_sw.choices:
+            raise RuntimeError('There is no software.')
+        sw = bundle[self.arg_sw]
+        if self.needs_hw:
+            getattr(self.software[sw], self.lname)(hardware_unit())
+        else:
+            getattr(self.software[sw], self.lname)()
 
 
 class UniwsSoftwareFetch(UniwsSoftwareApp):
@@ -53,6 +80,7 @@ class UniwsSoftwareFetch(UniwsSoftwareApp):
             help='Fetch the software.',
             prolog=None,
             epilog=None,
+            needs_hw=False,
         )
 
     def __call__(self, bundle: 'Bundle') -> 'None':
@@ -68,6 +96,7 @@ class UniwsSoftwarePatch(UniwsSoftwareApp):
             help='Patch the software.',
             prolog=None,
             epilog=None,
+            needs_hw=False,
         )
 
     def __call__(self, bundle: 'Bundle') -> 'None':
@@ -83,6 +112,7 @@ class UniwsSoftwareBuild(UniwsSoftwareApp):
             help='Build the software.',
             prolog=None,
             epilog=None,
+            needs_hw=False,
         )
 
     def __call__(self, bundle: 'Bundle') -> 'None':
@@ -98,6 +128,7 @@ class UniwsSoftwareInstall(UniwsSoftwareApp):
             help='Install the software.',
             prolog=None,
             epilog=None,
+            needs_hw=True,
         )
 
     def __call__(self, bundle: 'Bundle') -> 'None':
@@ -113,6 +144,7 @@ class UniwsSoftwareTest(UniwsSoftwareApp):
             help='Test the software.',
             prolog=None,
             epilog=None,
+            needs_hw=True,
         )
 
     def __call__(self, bundle: 'Bundle') -> 'None':
@@ -128,6 +160,7 @@ class UniwsSoftwareDeploy(UniwsSoftwareApp):
             help='Deploy the software.',
             prolog=None,
             epilog=None,
+            needs_hw=False,
         )
 
     def __call__(self, bundle: 'Bundle') -> 'None':
@@ -143,6 +176,7 @@ class UniwsSoftwareClean(UniwsSoftwareApp):
             help='Clean the software.',
             prolog=None,
             epilog=None,
+            needs_hw=False,
         )
 
     def __call__(self, bundle: 'Bundle') -> 'None':
@@ -158,6 +192,7 @@ class UniwsSoftwareReset(UniwsSoftwareApp):
             help='Reset the software.',
             prolog=None,
             epilog=None,
+            needs_hw=False,
         )
 
     def __call__(self, bundle: 'Bundle') -> 'None':
@@ -173,6 +208,7 @@ class UniwsSoftwareWipe(UniwsSoftwareApp):
             help='Wipe the software.',
             prolog=None,
             epilog=None,
+            needs_hw=False,
         )
 
     def __call__(self, bundle: 'Bundle') -> 'None':
