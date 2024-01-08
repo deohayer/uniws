@@ -1,4 +1,4 @@
-from uniws.core import *
+from uniws import *
 
 
 def hardware() -> 'list[Hardware] | Hardware':

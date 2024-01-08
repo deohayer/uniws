@@ -1,166 +1,70 @@
 # PYTHON_ARGCOMPLETE_OK
 
-import sys
-
-from .hw import *
-from .init import *
-from .sw import *
+from .app_init import *
+from .app_hw import *
+from .app_sw import *
 
 
-class UniwsMain(Main):
+class AppUniws(App):
     def __init__(self) -> 'None':
-        super().__init__(
-            name='uniws',
-            help='The primary application.',
-        )
-        self.add(UniwsInit())
-        self.add(UniwsHardware())
-        self.add(UniwsSoftware())
+        super().__init__(name='uniws',
+                         help='The main uniws application.')
+        AppInit(self)
+        AppHardware(self)
+        AppSoftware(self)
 
 
-class UniwsShortcut(Main):
-    def __init__(self, app_class: 'type') -> 'None':
-        self.app: 'App' = app_class(True)
-        super().__init__(
-            name=self.app.name,
-            help=self.app.help,
-            prolog=self.app.prolog,
-            epilog=self.app.epilog,
-        )
-        for x in self.app.args:
-            self.add(x)
-
-    def __call__(self, bundle: 'Bundle' = sys.argv) -> 'None':
-        super().__call__(bundle)
-        self.app(bundle)
+def uniws() -> 'None':
+    AppUniws()()
 
 
-#
-# Entry points.
-#
+def uhu() -> 'None':
+    AppShortcutHardwareUse(None)()
 
 
-def uniws():
-    '''
-    The primary application.
-    '''
-    UniwsMain()()
+def uho() -> 'None':
+    AppShortcutHardwareOnoff(None)()
 
 
-def uha():
-    '''
-    Shortcut: uniws hw attach.
-    '''
-    UniwsShortcut(UniwsHardwareAttach)()
+def uhs() -> 'None':
+    AppShortcutHardwareSh(None)()
 
 
-def uhd():
-    '''
-    Shortcut: uniws hw detach.
-    '''
-    UniwsShortcut(UniwsHardwareDetach)()
+def uhg() -> 'None':
+    AppShortcutHardwareGet(None)()
 
 
-def uh0():
-    '''
-    Shortcut: uniws hw off.
-    '''
-    UniwsShortcut(UniwsHardwareOff)()
+def uhp() -> 'None':
+    AppShortcutHardwarePut(None)()
 
 
-def uh1():
-    '''
-    Shortcut: uniws hw on.
-    '''
-    UniwsShortcut(UniwsHardwareOn)()
+def uhw() -> 'None':
+    AppShortcutHardwareWatch(None)()
 
 
-def uhs():
-    '''
-    Shortcut: uniws hw shell.
-    '''
-    UniwsShortcut(UniwsHardwareShell)()
+def usf() -> 'None':
+    AppShortcutSoftwareFetch(None)()
 
 
-def uhg():
-    '''
-    Shortcut: uniws hw get.
-    '''
-    UniwsShortcut(UniwsHardwareGet)()
+def usb() -> 'None':
+    AppShortcutSoftwareBuild(None)()
 
 
-def uhp():
-    '''
-    Shortcut: uniws hw put.
-    '''
-    UniwsShortcut(UniwsHardwarePut)()
+def usi() -> 'None':
+    AppShortcutSoftwareInstall(None)()
 
 
-def uhw():
-    '''
-    Shortcut: uniws hw watch.
-    '''
-    UniwsShortcut(UniwsHardwareWatch)()
+def ust() -> 'None':
+    AppShortcutSoftwareTest(None)()
 
 
-def usf():
-    '''
-    Shortcut: uniws sw fetch.
-    '''
-    UniwsShortcut(UniwsSoftwareFetch)()
+def usr() -> 'None':
+    AppShortcutSoftwareRelease(None)()
 
 
-def usp():
-    '''
-    Shortcut: uniws sw patch.
-    '''
-    UniwsShortcut(UniwsSoftwarePatch)()
+def usc() -> 'None':
+    AppShortcutSoftwareClean(None)()
 
 
-def usb():
-    '''
-    Shortcut: uniws sw build.
-    '''
-    UniwsShortcut(UniwsSoftwareBuild)()
-
-
-def usi():
-    '''
-    Shortcut: uniws sw install.
-    '''
-    UniwsShortcut(UniwsSoftwareInstall)()
-
-
-def ust():
-    '''
-    Shortcut: uniws sw test.
-    '''
-    UniwsShortcut(UniwsSoftwareTest)()
-
-
-def usd():
-    '''
-    Shortcut: uniws sw deploy.
-    '''
-    UniwsShortcut(UniwsSoftwareDeploy)()
-
-
-def usc():
-    '''
-    Shortcut: uniws sw clean.
-    '''
-    UniwsShortcut(UniwsSoftwareClean)()
-
-
-def usr():
-    '''
-    Shortcut: uniws sw reset.
-    '''
-    UniwsShortcut(UniwsSoftwareReset)()
-
-
-def usw():
-    '''
-    Shortcut: uniws sw wipe.
-    '''
-    UniwsShortcut(UniwsSoftwareWipe)()
+def usp() -> 'None':
+    AppShortcutSoftwarePurge(None)()

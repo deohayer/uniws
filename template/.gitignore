@@ -2,8 +2,8 @@
 
 !.gitignore
 !.gitmodules
-!.bashrc
 !README.md
+!.sh
 !.uniws
 !.uniws/**
 !bin

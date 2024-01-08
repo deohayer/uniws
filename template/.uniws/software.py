@@ -1,4 +1,4 @@
-from uniws.core import *
+from uniws import *
 
 
 def software() -> 'list[Software]':
