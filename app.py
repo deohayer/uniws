@@ -23,9 +23,9 @@ class AppShortcut(App):
         if isinstance(app, str):
             super().__init__(help=f'Shortcut for: uniws {app} {name}\n{help}')
         else:
-            super().__init__(app=app,
-                             name=name,
+            super().__init__(name=name,
                              help=help)
+            app.apps.append(self)
 
     def __call__(
         self,

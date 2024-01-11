@@ -18,17 +18,16 @@ class AppShortcutSoftware(AppShortcut):
                 self.sw[x.name] = x
         if self.sw:
             choices = {x.name: x.help for x in self.sw.values()}
-            self.arg = Arg(self,
-                           help=f'Software to {self.cmd}.',
+            self.arg = Arg(help=f'Software to {self.cmd}.',
                            count='?',
                            choices=choices,
                            default=next(iter(choices)),
                            name='SW')
         else:
-            self.arg = Arg(self,
-                           help=f'Software to {self.cmd} (none available).',
+            self.arg = Arg(help=f'Software to {self.cmd} (none available).',
                            count='?',
                            name='SW')
+        self.args.append(self.arg)
 
     def __call__(
         self,
