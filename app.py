@@ -47,6 +47,7 @@ class Subcommand(App):
         prolog: 'str' = None,
         epilog: 'str' = None,
     ) -> 'None':
+        self.cmd = name
         self.list: 'list[App]' = []
         self.error = None
         for app in apps:
@@ -90,6 +91,13 @@ class Subcommand(App):
             raise self.error
         if len(self.list) == 1:
             self.list[0](args, apps)
+        else:
+            app = apps[3 if self.name else 1]
+            for x in self.list:
+                if x.name == app.name:
+                    app = x
+                    break
+            getattr(app, self.cmd)(args, apps)
 
 
 class AppInit(Command):
