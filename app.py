@@ -15,10 +15,10 @@ class Command(App):
     def __init__(
         self,
         uws: 'bool',
-        name: 'str' = '',
-        help: 'str' = '',
-        prolog: 'str' = '',
-        epilog: 'str' = '',
+        name: 'str' = None,
+        help: 'str' = None,
+        prolog: 'str' = None,
+        epilog: 'str' = None,
     ) -> 'None':
         super().__init__(name=name,
                          help=help,
@@ -42,10 +42,10 @@ class Subcommand(App):
         self,
         sub: 'bool',
         apps: 'list[App]',
-        name: 'str' = '',
-        help: 'str' = '',
-        prolog: 'str' = '',
-        epilog: 'str' = '',
+        name: 'str' = None,
+        help: 'str' = None,
+        prolog: 'str' = None,
+        epilog: 'str' = None,
     ) -> 'None':
         self.list: 'list[App]' = []
         self.error = None
