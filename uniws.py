@@ -1,70 +1,76 @@
 # PYTHON_ARGCOMPLETE_OK
 
-from .app_init import *
-from .app_hw import *
-from .app_sw import *
+from .app import *
 
 
 class AppUniws(App):
     def __init__(self) -> 'None':
         super().__init__(name='uniws',
                          help='The main uniws application.')
-        AppInit(self)
-        AppHardware(self)
-        AppSoftware(self)
+        self.apps.append(AppInit())
+        self.apps.append(AppHardware())
+        self.apps.append(AppSoftware())
 
 
 def uniws() -> 'None':
     AppUniws()()
 
 
-def uhu() -> 'None':
-    AppShortcutHardwareUse(None)()
-
-
-def uho() -> 'None':
-    AppShortcutHardwareOnoff(None)()
-
-
-def uhs() -> 'None':
-    AppShortcutHardwareSh(None)()
-
-
-def uhg() -> 'None':
-    AppShortcutHardwareGet(None)()
+def uhc() -> 'None':
+    AppHardware.connect(False)()
 
 
 def uhp() -> 'None':
-    AppShortcutHardwarePut(None)()
+    AppHardware.power(False)()
+
+
+def uhu() -> 'None':
+    AppHardware.upload(False)()
+
+
+def uhd() -> 'None':
+    AppHardware.download(False)()
+
+
+def uhs() -> 'None':
+    AppHardware.shell(False)()
 
 
 def uhw() -> 'None':
-    AppShortcutHardwareWatch(None)()
+    AppHardware.watch(False)()
+
+
+def uha() -> 'None':
+    AppHardware.action(False)()
 
 
 def usf() -> 'None':
-    AppShortcutSoftwareFetch(None)()
+    AppSoftware.fetch(False)()
 
 
 def usb() -> 'None':
-    AppShortcutSoftwareBuild(None)()
+    AppSoftware.build(False)()
 
 
 def usi() -> 'None':
-    AppShortcutSoftwareInstall(None)()
+    AppSoftware.install(False)()
 
 
 def ust() -> 'None':
-    AppShortcutSoftwareTest(None)()
+    AppSoftware.test(False)()
 
 
 def usr() -> 'None':
-    AppShortcutSoftwareRelease(None)()
+    AppSoftware.release(False)()
 
 
 def usc() -> 'None':
-    AppShortcutSoftwareClean(None)()
+    AppSoftware.clean(False)()
 
 
 def usp() -> 'None':
-    AppShortcutSoftwarePurge(None)()
+    AppSoftware.purge(False)()
+
+
+def usa() -> 'None':
+    AppSoftware.action(False)()

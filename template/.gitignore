@@ -3,7 +3,6 @@
 !.gitignore
 !.gitmodules
 !README.md
-!.sh
 !.uniws
 !.uniws/**
 !bin
