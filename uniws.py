@@ -13,64 +13,64 @@ class AppUniws(App):
 
 
 def uniws() -> 'None':
-    AppUniws()()
+    main(AppUniws())
 
 
 def uhc() -> 'None':
-    AppHardware.connect(False)()
+    main(AppHardware.connect(False))
 
 
 def uhp() -> 'None':
-    AppHardware.power(False)()
+    main(AppHardware.power(False))
 
 
 def uhu() -> 'None':
-    AppHardware.upload(False)()
+    main(AppHardware.upload(False))
 
 
 def uhd() -> 'None':
-    AppHardware.download(False)()
+    main(AppHardware.download(False))
 
 
 def uhs() -> 'None':
-    AppHardware.shell(False)()
+    main(AppHardware.shell(False))
 
 
 def uhw() -> 'None':
-    AppHardware.watch(False)()
+    main(AppHardware.watch(False))
 
 
 def uha() -> 'None':
-    AppHardware.action(False)()
+    main(AppHardware.action(False))
 
 
 def usf() -> 'None':
-    AppSoftware.fetch(False)()
+    main(AppSoftware.fetch(False))
 
 
 def usb() -> 'None':
-    AppSoftware.build(False)()
+    main(AppSoftware.build(False))
 
 
 def usi() -> 'None':
-    AppSoftware.install(False)()
+    main(AppSoftware.install(False))
 
 
 def ust() -> 'None':
-    AppSoftware.test(False)()
+    main(AppSoftware.test(False))
 
 
 def usr() -> 'None':
-    AppSoftware.release(False)()
+    main(AppSoftware.release(False))
 
 
 def usc() -> 'None':
-    AppSoftware.clean(False)()
+    main(AppSoftware.clean(False))
 
 
 def usp() -> 'None':
-    AppSoftware.purge(False)()
+    main(AppSoftware.purge(False))
 
 
 def usa() -> 'None':
-    AppSoftware.action(False)()
+    main(AppSoftware.action(False))
