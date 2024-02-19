@@ -92,7 +92,7 @@ class Subcommand(App):
         if len(self.list) == 1:
             self.list[0](args, apps)
         else:
-            app = apps[3 if self.name else 1]
+            app = apps[1 if apps[0] is self else 3]
             for x in self.list:
                 if x.name == app.name:
                     app = x
