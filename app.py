@@ -48,16 +48,17 @@ class Subcommand(App):
         epilog: 'str' = None,
     ) -> 'None':
         self.cmd = name
-        self.list: 'list[App]' = []
+        self._apps: 'list[App]' = apps
+        self._list: 'list[App]' = []
         self.error = None
         for app in apps:
             if getattr(app, name):
-                self.list.append(app)
-        if not self.list:
+                self._list.append(app)
+        if not self._list:
             self.error = RuntimeError(f'Nothing supports {name}.')
-        if len(apps) == 1 and self.list:
-            app = self.list[0]
-            subapp: 'App' = getattr(self.list[0], name)
+        if len(apps) == 1 and self._list:
+            app = self._list[0]
+            subapp: 'App' = getattr(self._list[0], name)
             super().__init__(name=(name if sub else None),
                              help=subapp.help or app.help or help,
                              prolog=subapp.prolog or app.prolog or prolog,
@@ -65,13 +66,13 @@ class Subcommand(App):
             self.args.extend(subapp.args)
             self.apps.extend(subapp.apps)
             # Substitute software with the corresponding subcommand.
-            self.list[0] = subapp
+            self._list[0] = subapp
         else:
             super().__init__(name=(name if sub else None),
                              help=help,
                              prolog=prolog,
                              epilog=epilog)
-            for app in self.list:
+            for app in self._list:
                 subapp: 'App' = getattr(app, name)
                 newapp = App(name=app.name,
                              help=subapp.help or app.help,
@@ -89,11 +90,11 @@ class Subcommand(App):
         super().__call__(args, apps)
         if self.error:
             raise self.error
-        if len(self.list) == 1:
-            self.list[0](args, apps)
+        if len(apps) == 1 and len(self._list) == 1:
+            self._list[0](args, apps)
         else:
             app = apps[1 if apps[0] is self else 3]
-            for x in self.list:
+            for x in self._list:
                 if x.name == app.name:
                     app = x
                     break
