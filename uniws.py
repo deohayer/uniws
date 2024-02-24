@@ -3,74 +3,101 @@
 from .app import *
 
 
-class AppUniws(App):
-    def __init__(self) -> 'None':
-        super().__init__(name='uniws',
-                         help='The main uniws application.')
-        self.apps.append(AppInit())
-        self.apps.append(AppHardware())
-        self.apps.append(AppSoftware())
-
-
-def uniws() -> 'None':
-    main(AppUniws())
+def uws() -> 'None':
+    main(AppWorkspace())
 
 
 def uhc() -> 'None':
-    main(AppHardware.connect(False))
+    main(AppWare(
+        ware=hardware(),
+        name='connect',
+        help='Connection to the hardware.',
+    ))
 
 
 def uhp() -> 'None':
-    main(AppHardware.power(False))
+    main(AppWare(
+        ware=hardware(),
+        name='power',
+        help='Power state of the hardware.',
+    ))
 
 
 def uhu() -> 'None':
-    main(AppHardware.upload(False))
+    main(AppWare(
+        ware=hardware(),
+        name='upload',
+        help='Upload files to the hardware.',
+    ))
 
 
 def uhd() -> 'None':
-    main(AppHardware.download(False))
+    main(AppWare(
+        ware=hardware(),
+        name='download',
+        help='Download files from the hardware.',
+    ))
 
 
 def uhs() -> 'None':
-    main(AppHardware.shell(False))
-
-
-def uhw() -> 'None':
-    main(AppHardware.watch(False))
+    main(AppWare(
+        ware=hardware(),
+        name='shell',
+        help='Use the hardware shell.',
+    ))
 
 
 def uha() -> 'None':
-    main(AppHardware.action(False))
+    main(AppWare(
+        ware=hardware(),
+        name='action',
+        help='Custom actions on the hardware.',
+    ))
 
 
-def usf() -> 'None':
-    main(AppSoftware.fetch(False))
+def usd() -> 'None':
+    main(AppWare(
+        ware=software(),
+        name='download',
+        help='Download the software sources.',
+    ))
 
 
 def usb() -> 'None':
-    main(AppSoftware.build(False))
+    main(AppWare(
+        ware=software(),
+        name='build',
+        help='Build the software.',
+    ))
 
 
 def usi() -> 'None':
-    main(AppSoftware.install(False))
+    main(AppWare(
+        ware=software(),
+        name='install',
+        help='Install the software.',
+    ))
 
 
 def ust() -> 'None':
-    main(AppSoftware.test(False))
-
-
-def usr() -> 'None':
-    main(AppSoftware.release(False))
+    main(AppWare(
+        ware=software(),
+        name='test',
+        help='Test the software.',
+    ))
 
 
 def usc() -> 'None':
-    main(AppSoftware.clean(False))
-
-
-def usp() -> 'None':
-    main(AppSoftware.purge(False))
+    main(AppWare(
+        ware=software(),
+        name='clean',
+        help='Clean the software.',
+    ))
 
 
 def usa() -> 'None':
-    main(AppSoftware.action(False))
+    main(AppWare(
+        ware=software(),
+        name='action',
+        help='Custom actions on the software.',
+    ))

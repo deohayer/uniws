@@ -1,126 +1,48 @@
+import sys
+
 from .user import *
 
 if DIR_UWS:
+    sys.path.insert(0, f'{DIR_UWS}/.uniws')
     from hardware import hardware
     from software import software
 else:
-    def hardware() -> 'list[Hardware] | Hardware':
+    def hardware() -> 'list[Hardware]':
         return []
 
     def software() -> 'list[Software]':
         return []
 
 
-class Command(App):
-    def __init__(
-        self,
-        uws: 'bool',
-        name: 'str' = None,
-        help: 'str' = None,
-        prolog: 'str' = None,
-        epilog: 'str' = None,
-    ) -> 'None':
-        super().__init__(name=name,
-                         help=help,
-                         prolog=prolog,
-                         epilog=epilog)
-        self.__uws = uws
+class AppWorkspace(App):
+    '''
+    An application to initialize a uniform workspace: `uws`.
+    '''
 
-    def __call__(
-        self,
-        args: 'dict[Arg]' = None,
-        apps: 'list[App]' = None,
-    ) -> 'None':
-        super().__call__(args, apps)
-        if self.__uws and not DIR_UWS:
-            raise RuntimeError(
-                'This command is available only inside uniws workspace.')
-
-
-class Subcommand(App):
-    def __init__(
-        self,
-        sub: 'bool',
-        apps: 'list[App]',
-        name: 'str' = None,
-        help: 'str' = None,
-        prolog: 'str' = None,
-        epilog: 'str' = None,
-    ) -> 'None':
-        self.cmd = name
-        self._apps: 'list[App]' = apps
-        self._list: 'list[App]' = []
-        self.error = None
-        for app in apps:
-            if getattr(app, name):
-                self._list.append(app)
-        if not self._list:
-            self.error = RuntimeError(f'Nothing supports {name}.')
-        if len(apps) == 1 and self._list:
-            app = self._list[0]
-            subapp: 'App' = getattr(self._list[0], name)
-            super().__init__(name=(name if sub else None),
-                             help=subapp.help or app.help or help,
-                             prolog=subapp.prolog or app.prolog or prolog,
-                             epilog=subapp.epilog or app.epilog or epilog)
-            self.args.extend(subapp.args)
-            self.apps.extend(subapp.apps)
-            # Substitute software with the corresponding subcommand.
-            self._list[0] = subapp
-        else:
-            super().__init__(name=(name if sub else None),
-                             help=help,
-                             prolog=prolog,
-                             epilog=epilog)
-            for app in self._list:
-                subapp: 'App' = getattr(app, name)
-                newapp = App(name=app.name,
-                             help=subapp.help or app.help,
-                             prolog=subapp.prolog or app.prolog,
-                             epilog=subapp.epilog or app.epilog)
-                newapp.args.extend(subapp.args)
-                newapp.apps.extend(subapp.apps)
-                self.apps.append(newapp)
-
-    def __call__(
-        self,
-        args: 'dict[Arg]' = None,
-        apps: 'list[App]' = None,
-    ) -> 'None':
-        super().__call__(args, apps)
-        if self.error:
-            raise self.error
-        if len(apps) == 1 and len(self._list) == 1:
-            self._list[0](args, apps)
-        else:
-            app = apps[1 if apps[0] is self else 3]
-            for x in self._list:
-                if x.name == app.name:
-                    app = x
-                    break
-            getattr(app, self.cmd)(args, apps)
-
-
-class AppInit(Command):
     def __init__(self) -> 'None':
-        super().__init__(False,
-                         name='init',
-                         help='Initialize an empty uniws workspace.')
-        self.arg_remote = Arg(name='URI',
-                              sopt='r',
-                              lopt='remote',
-                              help='A Git remote to set as the origin.')
+        super().__init__(
+            help='Initialize an empty workspace.',
+        )
+        self.arg_remote = Arg(
+            name='URI',
+            sopt='r',
+            lopt='remote',
+            help='A Git remote to set as the origin.',
+        )
         self.args.append(self.arg_remote)
-        self.arg_branch = Arg(name='NAME',
-                              sopt='b',
-                              lopt='branch',
-                              help='A Git branch to set as main.')
+        self.arg_branch = Arg(
+            name='NAME',
+            sopt='b',
+            lopt='branch',
+            help='A Git branch to set as the default.',
+        )
         self.args.append(self.arg_branch)
-        self.arg_dir = Arg(name='DIR',
-                           count='?',
-                           default=os.path.abspath('.'),
-                           help=str('A non-existing or empty directory. '
-                                    'Defaults to the current one.'))
+        self.arg_dir = Arg(
+            name='DIR',
+            count='?',
+            default=DIR_PWD,
+            help='A non-existing or empty directory.',
+        )
         self.args.append(self.arg_dir)
 
     def __call__(
@@ -128,14 +50,13 @@ class AppInit(Command):
         args: 'dict[Arg]' = None,
         apps: 'list[App]' = None,
     ) -> 'None':
-        super().__call__(args, apps)
         dir = os.path.abspath(args[self.arg_dir])
         if os.path.exists(dir):
             if os.path.isdir(dir):
                 if len(os.listdir(dir)) != 0:
-                    raise RuntimeError(f'Directory not empty: {dir}')
+                    raise CallError(f'The directory is not empty: {dir}')
             else:
-                raise RuntimeError(f'Not a directory: {dir}')
+                raise CallError(f'Not a directory: {dir}')
         else:
             os.makedirs(dir, 0o755)
         branch = args[self.arg_branch]
@@ -152,139 +73,72 @@ class AppInit(Command):
            f';')
 
 
-class AppSoftware(Command):
-    APPS = software()
+class AppWare(App):
+    '''
+    A hardware or software action application (`uh*` or `us*`).
+    '''
 
-    def __init__(self) -> None:
-        super().__init__(True,
-                         name='sw',
-                         help='Manipulate software.')
-        self.apps.append(AppSoftware.fetch(True))
-        self.apps.append(AppSoftware.build(True))
-        self.apps.append(AppSoftware.install(True))
-        self.apps.append(AppSoftware.test(True))
-        self.apps.append(AppSoftware.release(True))
-        self.apps.append(AppSoftware.clean(True))
-        self.apps.append(AppSoftware.purge(True))
-        self.apps.append(AppSoftware.action(True))
+    def __init__(
+        self,
+        ware: 'list[Hardware | Software]',
+        name: 'str',
+        help: 'str',
+    ) -> 'None':
+        '''
+        Create an instance.
+        Introduces two internal fields:
+         * `app`   - a substitute `App`. This is for cases when only one
+           instance of `Hardware` or `Software` is defined. The corresponding
+           `App` fields (`action`, `download`, `test`) can be "merged" into
+           the action application (`uha`, `usd`, `ust`).
+         * `error` - an error message. If not empty, a `CallError` will be
+           raised before any other action.
 
-    @staticmethod
-    def fetch(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppSoftware.APPS,
-                          name='fetch',
-                          help='Fetch the sources.')
+        Parameters:
+         * `ware` - a list obtained by running `hardware()` or `software()`.
+         * `name` - the action name, must correspond to one of the fields
+           in `Hardware` or `Software`, e.g. "action", "download", "test".
+           It is not used as the application name.
+         * `help` - corresponds to `App.help`.
+        '''
+        super().__init__(help=help)
+        # Pick only apps that support the given command.
+        for x in ware:
+            app: 'App' = getattr(x, f'app_{name}')
+            if app:
+                app.name = x.name
+                self.apps.append(app)
+        # Return immediately if nothing supports the given command.
+        self.error = ''
+        if not self.apps:
+            self.error = f'Nothing supports {name}.'
+            return
+        # Special case when there is only one item in ware.
+        # Merge it into the main one for convenience.
+        self.app = None
+        if len(ware) == 1:
+            self.app = self.apps.pop()
+            self.help = self.app.help or self.help
+            self.prolog = self.app.prolog or self.prolog
+            self.epilog = self.app.epilog or self.epilog
+            self.args.extend(self.app.args)
+            self.apps.extend(self.app.apps)
 
-    @staticmethod
-    def build(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppSoftware.APPS,
-                          name='build',
-                          help='Build the software from the sources.')
+    def __call__(
+        self,
+        args: 'dict[Arg]' = None,
+        apps: 'list[App]' = None,
+    ) -> 'None':
+        '''
+        Execute `self.app`, if not `None`. Otherwise no-op.
 
-    @staticmethod
-    def install(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppSoftware.APPS,
-                          name='install',
-                          help='Install the built software.')
-
-    @staticmethod
-    def test(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppSoftware.APPS,
-                          name='test',
-                          help='Test the installed software.')
-
-    @staticmethod
-    def release(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppSoftware.APPS,
-                          name='release',
-                          help='Release the software.')
-
-    @staticmethod
-    def clean(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppSoftware.APPS,
-                          name='clean',
-                          help='Delete the built software.')
-
-    @staticmethod
-    def purge(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppSoftware.APPS,
-                          name='purge',
-                          help='Delete the sources.')
-
-    @staticmethod
-    def action(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppSoftware.APPS,
-                          name='action',
-                          help='Perform a custom action on the software.')
-
-
-class AppHardware(Command):
-    APPS = hardware()
-
-    def __init__(self) -> None:
-        super().__init__(True,
-                         name='hw',
-                         help='Manipulate hardware.')
-        self.apps.append(AppHardware.connect(True))
-        self.apps.append(AppHardware.power(True))
-        self.apps.append(AppHardware.upload(True))
-        self.apps.append(AppHardware.download(True))
-        self.apps.append(AppHardware.shell(True))
-        self.apps.append(AppHardware.watch(True))
-        self.apps.append(AppHardware.action(True))
-
-    @staticmethod
-    def connect(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppHardware.APPS,
-                          name='connect',
-                          help='Change state of connection to the hardware.')
-
-    @staticmethod
-    def power(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppHardware.APPS,
-                          name='power',
-                          help='Change power state of the hardware.')
-
-    @staticmethod
-    def upload(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppHardware.APPS,
-                          name='upload',
-                          help='Upload files to the hardware.')
-
-    @staticmethod
-    def download(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppHardware.APPS,
-                          name='download',
-                          help='Download files from the hardware.')
-
-    @staticmethod
-    def shell(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppHardware.APPS,
-                          name='shell',
-                          help='Execute a command or start the shell in an interactive mode.')
-
-    @staticmethod
-    def watch(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppHardware.APPS,
-                          name='watch',
-                          help='Watch the hardware live stream.')
-
-    @staticmethod
-    def action(sub: 'bool') -> 'App':
-        return Subcommand(sub,
-                          AppHardware.APPS,
-                          name='action',
-                          help='Perform a custom action on the hardware.')
+        Exceptions:
+         * `CallError`, if `DIR_UWS` is not defined.
+         * `CallError`, if `self.error` is not empty.
+        '''
+        if not DIR_UWS:
+            self.error = 'This command must be run in a workspace.'
+        if self.error:
+            raise CallError(self.error)
+        if self.app:
+            self.app(args, apps)
