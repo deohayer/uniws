@@ -1,103 +1,78 @@
 # PYTHON_ARGCOMPLETE_OK
 
-from .app import *
+import sys
+
+from .shell import *
+
+# if DIR_UWS:
+#     sys.path.insert(0, f'{DIR_UWS}/.uniws')
+#     from hardware import hardware
+#     from software import software
+# else:
+#     def hardware() -> 'list[Hardware]':
+#         return []
+
+#     def software() -> 'list[Software]':
+#         return []
 
 
-def uws() -> 'None':
-    main(AppWorkspace())
+# class AppWorkspace(App):
+#     '''
+#     An application to initialize a uniform workspace: `uws`.
+#     '''
 
+#     def __init__(self) -> 'None':
+#         super().__init__(
+#             help='Initialize an empty workspace.',
+#         )
+#         self.arg_remote = Arg(
+#             name='URI',
+#             sopt='r',
+#             lopt='remote',
+#             help='A Git remote to set as the origin.',
+#         )
+#         self.args.append(self.arg_remote)
+#         self.arg_branch = Arg(
+#             name='NAME',
+#             sopt='b',
+#             lopt='branch',
+#             help='A Git branch to set as the default.',
+#         )
+#         self.args.append(self.arg_branch)
+#         self.arg_dir = Arg(
+#             name='DIR',
+#             count='?',
+#             default=DIR_PWD,
+#             help='A non-existing or empty directory.',
+#         )
+#         self.args.append(self.arg_dir)
 
-def uhc() -> 'None':
-    main(AppWare(
-        ware=hardware(),
-        name='connect',
-        help='Connection to the hardware.',
-    ))
+#     def __call__(
+#         self,
+#         args: 'dict[Arg]' = None,
+#         apps: 'list[App]' = None,
+#     ) -> 'None':
+#         dir = os.path.abspath(args[self.arg_dir])
+#         if os.path.exists(dir):
+#             if os.path.isdir(dir):
+#                 if len(os.listdir(dir)) != 0:
+#                     raise CallError(f'The directory is not empty: {dir}')
+#             else:
+#                 raise CallError(f'Not a directory: {dir}')
+#         else:
+#             os.makedirs(dir, 0o755)
+#         branch = args[self.arg_branch]
+#         branch = f'-b {branch}' if branch else ''
+#         remote = args[self.arg_remote]
+#         remote = f'git remote add origin {remote}' if remote else 'true'
+#         sh(f'true'
+#            f' && cp -RaT {os.path.dirname(__file__)}/template {dir}'
+#            f' && cd {dir}'
+#            f' && git init {branch}'
+#            f' && {remote}'
+#            f' && git add -A'
+#            f' && git commit -m "Initial commit"'
+#            f';')
 
-
-def uhp() -> 'None':
-    main(AppWare(
-        ware=hardware(),
-        name='power',
-        help='Power state of the hardware.',
-    ))
-
-
-def uhu() -> 'None':
-    main(AppWare(
-        ware=hardware(),
-        name='upload',
-        help='Upload files to the hardware.',
-    ))
-
-
-def uhd() -> 'None':
-    main(AppWare(
-        ware=hardware(),
-        name='download',
-        help='Download files from the hardware.',
-    ))
-
-
-def uhs() -> 'None':
-    main(AppWare(
-        ware=hardware(),
-        name='shell',
-        help='Use the hardware shell.',
-    ))
-
-
-def uha() -> 'None':
-    main(AppWare(
-        ware=hardware(),
-        name='action',
-        help='Custom actions on the hardware.',
-    ))
-
-
-def usd() -> 'None':
-    main(AppWare(
-        ware=software(),
-        name='download',
-        help='Download the software sources.',
-    ))
-
-
-def usb() -> 'None':
-    main(AppWare(
-        ware=software(),
-        name='build',
-        help='Build the software.',
-    ))
-
-
-def usi() -> 'None':
-    main(AppWare(
-        ware=software(),
-        name='install',
-        help='Install the software.',
-    ))
-
-
-def ust() -> 'None':
-    main(AppWare(
-        ware=software(),
-        name='test',
-        help='Test the software.',
-    ))
-
-
-def usc() -> 'None':
-    main(AppWare(
-        ware=software(),
-        name='clean',
-        help='Clean the software.',
-    ))
-
-
-def usa() -> 'None':
-    main(AppWare(
-        ware=software(),
-        name='action',
-        help='Custom actions on the software.',
-    ))
+def uniws() -> 'None':
+    return
