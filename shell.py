@@ -18,7 +18,7 @@ class ShellError(argapp.CallError):
     def __init__(self, result: 'ShellResult') -> 'None':
         super().__init__(
             text=str(
-                f'The command failed with the exit code {result.code}:\n'
+                f'The command failed (code {result.code}):\n'
                 f'{result.cmd}'
             ),
             code=result.code,
