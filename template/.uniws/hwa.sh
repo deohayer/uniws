@@ -4,7 +4,7 @@
 # $2 - a hardware entry to use, if there are multiple.
 
 set -e
-DIR="$(dirname "${BASH_SOURCE[0]}")"
+ROOT="$(realpath $(dirname "${BASH_SOURCE[0]}")/..)"
 
 if [[ $1 == '?' ]]; then
     # TODO: Populate the hardware, if any.

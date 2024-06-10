@@ -6,7 +6,7 @@
 # $4 - a destination path.
 
 set -e
-DIR="$(dirname "${BASH_SOURCE[0]}")"
+ROOT="$(realpath $(dirname "${BASH_SOURCE[0]}")/..)"
 
 if [[ $1 == '?' ]]; then
     # TODO: Populate the hardware, if any.
