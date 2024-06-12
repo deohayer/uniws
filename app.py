@@ -1,7 +1,7 @@
 import sys
 
 from typing import Any
-from argapp import App, AppHelper, Arg
+from argapp import App, Arg
 from .shell import *
 from .lib import *
 
@@ -99,15 +99,20 @@ class UniwsSetup(App):
             text_abbr = (
                 f'#!/usr/bin/env python3\n'
                 f'# PYTHON_ARGCOMPLETE_OK\n'
+                f'import os\n'
                 f'import sys\n'
                 f'from uniws.app import Uniws\n'
                 f'from argapp import main\n'
                 f'\n'
-                f'argv = sys.argv[1:]\n'
-                f'argv.insert(0, \"{ABBRS[abbr]}\")\n'
-                f'argv.insert(0, \"{abbr[:2]}\")\n'
-                f'argv.insert(0, \"uniws\")\n'
-                f'main(Uniws(), argv)'
+                f'sys.argv.pop(0)\n'
+                f'sys.argv.insert(0, \"{ABBRS[abbr]}\")\n'
+                f'sys.argv.insert(0, \"{abbr[:2]}\")\n'
+                f'sys.argv.insert(0, \"uniws\")\n'
+                f'if os.environ.get(\"COMP_LINE\", None) != None:\n'
+                f'    cmd = f\"{{sys.argv[0]}} {{sys.argv[1]}} {{sys.argv[2]}}\"\n'
+                f'    os.environ[\"COMP_LINE\"] = cmd + os.environ[\"COMP_LINE\"][3:]\n'
+                f'    os.environ[\"COMP_POINT\"] = str(int(os.environ[\"COMP_POINT\"]) + len(cmd) - 3)\n'
+                f'main(Uniws())'
             )
             sh(f'true'
                f' && echo \'{text_abbr}\' > {path_abbr}'
