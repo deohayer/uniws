@@ -14,7 +14,7 @@ def software() -> 'Software':
 
 def script_list(cmd: 'str') -> 'dict[str, str]':
     lines = sh(
-        cmd=f'cd {DIR_UNI} && ./{cmd}.sh \'?\'',
+        cmd=f'"{DIR_UNI}/{cmd}.sh" \'?\'',
         cap=True,
     ).out.splitlines()
     choices = {}
@@ -26,7 +26,7 @@ def script_list(cmd: 'str') -> 'dict[str, str]':
 
 
 def script_run(cmd: 'str', args: 'list[str]') -> 'list[str]':
-    sh(f'cd {DIR_UNI} && ./{cmd}.sh \'!\' ' + ' '.join(args))
+    sh(f'"{DIR_UNI}/{cmd}.sh" \'!\' ' + ' '.join(args))
 
 
 class SoftwareFetch(AppSoftwareFetch):
@@ -74,4 +74,9 @@ class SoftwareAction(AppSoftwareAction):
         super().__init__(script_list('swa'))
 
     def __call__(self, args: 'dict[Arg, Any]', apps: 'list[App]') -> 'None':
-        script_run('swa', args.get(self.arg_sw, []))
+        tokens: 'list[str]' = args[self.arg_args]
+        for i in range(len(tokens)):
+            tokens[i] = tokens[i].replace('"', '\\\"')
+            tokens[i] = f'"{tokens[i]}"'
+        tokens.insert(0, args.get(self.arg_action, '""'))
+        script_run('swa', tokens)

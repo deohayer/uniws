@@ -14,7 +14,7 @@ def hardware() -> 'Hardware':
 
 def script_list(cmd: 'str', request: 'str' = '?') -> 'dict[str, str]':
     lines = sh(
-        cmd=f'cd {DIR_UNI} && ./{cmd}.sh \'{request}\'',
+        cmd=f'"{DIR_UNI}/{cmd}.sh" \'{request}\'',
         cap=True,
     ).out.splitlines()
     choices = {}
@@ -26,7 +26,7 @@ def script_list(cmd: 'str', request: 'str' = '?') -> 'dict[str, str]':
 
 
 def script_run(cmd: 'str', args: 'list[str]') -> 'list[str]':
-    sh(f'cd {DIR_UNI} && ./{cmd}.sh \'!\' ' + ' '.join(args))
+    sh(f'"{DIR_UNI}/{cmd}.sh" \'!\' ' + ' '.join(args))
 
 
 class HardwareConnect(AppHardwareConnect):
@@ -103,4 +103,9 @@ class HardwareAction(AppHardwareAction):
         super().__init__(script_list('hwa'))
 
     def __call__(self, args: 'dict[Arg, Any]', apps: 'list[App]') -> 'None':
-        script_run('hwa', [args.get(self.arg_hw, '""')])
+        tokens: 'list[str]' = args[self.arg_args]
+        for i in range(len(tokens)):
+            tokens[i] = tokens[i].replace('"', '\\\"')
+            tokens[i] = f'"{tokens[i]}"'
+        tokens.insert(0, args.get(self.arg_action, '""'))
+        script_run('hwa', tokens)

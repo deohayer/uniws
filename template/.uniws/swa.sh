@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# $1 - a request: '?' - list components, '!' - execute the command.
-# $@ - a list of components. If empty, the entire workspace is assumed.
+# $1 - a request: '?' - list actions, '!' - execute the command.
+# $2 - an action to perform. If empty, a single action is assumed.
+# $@ - the action's arguments, if any.
 
 set -e
 ROOT="$(realpath $(dirname "${BASH_SOURCE[0]}")/..)"
 
 if [[ $1 == '?' ]]; then
-    # TODO: Populate the components, if any.
+    # TODO: Populate the actions, if any.
     LIST=()
     for ITEM in "${LIST[@]}"; do
         echo ${ITEM}
@@ -15,14 +16,10 @@ if [[ $1 == '?' ]]; then
 fi
 
 if [[ $1 == '!' ]]; then
-    LIST=(${@:2})
-    if [[ -z "${LIST[*]}" ]]; then
-        # TODO: Execute for the workspace.
-        echo "Workspace"
-    else
-        for ITEM in "${LIST[@]}"; do
-            # TODO: Execute for the component.
-            echo "Component ${ITEM}"
-        done
-    fi
+    LIST=("${@:3}")
+    # TODO: Perform an action.
+    echo "Action: $2"
+    for ITEM in "${LIST[@]}"; do
+        echo "Argument: ${ITEM}"
+    done
 fi

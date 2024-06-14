@@ -189,7 +189,21 @@ class AppHardwareAction(AppHardwareCommand):
         choices: 'dict[str, str]',
         help: 'str' = 'Perform a workspace-specific action.',
     ) -> 'None':
-        super().__init__('action', help, choices)
+        super().__init__('action', help, {})
+        self.arg_action = None
+        if choices:
+            self.arg_action = Arg(
+                name='ACTION',
+                help='The action to perform.',
+                choices=choices,
+            )
+            self.args.append(self.arg_action)
+        self.arg_args = Arg(
+            name='ARGS',
+            help='Arguments for the action.',
+            count='~',
+        )
+        self.args.append(self.arg_args)
 
 
 class AppSoftwareCommand(AppWareCommand):
@@ -264,4 +278,18 @@ class AppSoftwareAction(AppSoftwareCommand):
         choices: 'dict[str, str]',
         help: 'str' = 'Perform a workspace-specific action.',
     ) -> 'None':
-        super().__init__('action', help, choices)
+        super().__init__('action', help, {})
+        self.arg_action = None
+        if choices:
+            self.arg_action = Arg(
+                name='ACTION',
+                help='The action to perform.',
+                choices=choices,
+            )
+            self.args.append(self.arg_action)
+        self.arg_args = Arg(
+            name='ARGS',
+            help='Arguments for the action.',
+            count='~',
+        )
+        self.args.append(self.arg_args)
