@@ -26,6 +26,9 @@ class ShellError(argapp.CallError):
         self.cmd = result.cmd
         self.out = result.out
 
+    def __str__(self) -> 'str':
+        return f'{self.text}\n{self.out}'
+
 
 def sh(
     cmd: 'str',
