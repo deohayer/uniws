@@ -220,7 +220,7 @@ class AppSoftwareCommand(AppWareCommand):
         self.arg_sw = Arg(
             name='SW',
             help=('A list of components to work with.\n'
-                  'If not specified, the entire workspace is assumed'),
+                  'If not specified, the entire workspace is assumed.'),
             count='*',
             choices=choices,
         )
