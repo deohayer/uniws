@@ -5,6 +5,7 @@
 
 set -e
 ROOT="$(realpath $(dirname "${BASH_SOURCE[0]}")/..)"
+source "${ROOT}/.uniws/.bashrc"
 
 if [[ $1 == '?' ]]; then
     # TODO: Populate the components, if any.
